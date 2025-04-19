@@ -1,0 +1,37 @@
+version: ""
+
+services:
+  spring-api-image:
+    image: spring-api-image
+    container_name: spring-api-container
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - spring-network
+    depends_on:
+      - mongodb
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+    ports:
+      - 27017:27017
+    networks:
+      - spring-network
+    volumes:
+      - mongo_data:/data/db
+networks:
+  spring-network:
+    driver: bridge
+volumes:
+  mongo_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./docker/volumes/mongo
+      o: bind
